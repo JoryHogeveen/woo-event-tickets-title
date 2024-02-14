@@ -49,6 +49,7 @@ class Woo_Event_Tickets_Title
 	protected function __construct() {
 		add_filter( 'the_title', array( $this, 'filter_wooticket_titles_in_shop_and_search' ), 10, 2 );
 		add_filter( 'woocommerce_order_item_name', array( $this, 'filter_woocommerce_order_item_name' ), 10, 2 );
+		add_filter( 'display_post_states', array( $this, 'filter_display_post_states' ), 10, 2 );
 	}
 
 	function filter_woocommerce_order_item_name( $name, $item ) {
@@ -65,28 +66,42 @@ class Woo_Event_Tickets_Title
 			}
 		}
 		return $name;
-	  }
+	}
+
+	function filter_display_post_states( $states, $post ) {
+		try {
+			$screen = get_current_screen();
+
+			if ( 'edit-product' === $screen->id ) {
+
+				$event = tribe_events_get_ticket_event( $post->ID );
+				if ( $event ) {
+					$link = get_edit_post_link( $event->ID );
+					$states['ticket_for'] = 'Ticket for <a href="' . $link . '">' . $event->post_title . '</a>';
+				}
+			}
+
+		} catch ( \Throwable $e ) {
+			if ( is_super_admin() ) {
+				var_dump( $e->getMessage() );
+			}
+		}
+		return $states;
+	}
 
 	function filter_wooticket_titles_in_shop_and_search( $title, $id ) {
 
 		try {
 			if ( is_admin() ) {
-				$screen = get_current_screen();
-
-				if ( 'edit-product' === $screen->id ) {
-					$title = $this->append_event_title( $title, $id );
-				}
-
-			} else {
-				if ( ! function_exists( 'is_shop' ) ) {
-					return $title;
-				}
-
-				if ( is_shop() || is_search() ) {
-					$title = $this->append_event_title( $title, $id );
-				}
+				return $title;
+			}
+			if ( ! function_exists( 'is_shop' ) ) {
+				return $title;
 			}
 
+			if ( is_shop() || is_search() ) {
+				$title = $this->append_event_title( $title, $id );
+			}
 		} catch ( \Throwable $e ) {
 			if ( is_super_admin() ) {
 				var_dump( $e->getMessage() );
