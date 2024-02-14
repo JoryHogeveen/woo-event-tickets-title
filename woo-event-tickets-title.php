@@ -58,7 +58,7 @@ class Woo_Event_Tickets_Title
 			$event = tribe_events_get_ticket_event( $item['product_id'] );
 			if ( $event ) {
 				$link = get_permalink( $event->ID );
-				$event_date = tribe_get_start_date( $event->ID, $display_time = true, 'M j \a\t g:ia' );
+				//$event_date = tribe_get_start_date( $event->ID, $display_time = true, 'M j \a\t g:ia' );
 				$name = $name . ' | Ticket for <a href="' . $link . '">' . $event->post_title . '</a>';// - ' . $event_date;
 			}
 		} catch ( \Throwable $e ) {
