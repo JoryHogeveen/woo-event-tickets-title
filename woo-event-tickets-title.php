@@ -70,12 +70,13 @@ class Woo_Event_Tickets_Title
 	function filter_wooticket_titles_in_shop_and_search( $title, $id ) {
 
 		try {
-			if ( ! wc_get_product( $id ) ) {
-				return $title;
-			}
-
 			if ( is_admin() ) {
-				
+				$screen = get_current_screen();
+
+				if ( 'edit-product' === $screen->id ) {
+					$title = $this->append_event_title( $title, $id );
+				}
+
 			} else {
 				if ( ! function_exists( 'is_shop' ) ) {
 					return $title;
@@ -96,6 +97,9 @@ class Woo_Event_Tickets_Title
 	}
 
 	private function append_event_title( $title, $id ) {
+		if ( ! wc_get_product( $id ) ) {
+			return $title;
+		}
 
 		// Search for the non-deprecated custom field.
 		$event_id = (int) get_post_meta( $id, Tribe__Tickets_Plus__Commerce__WooCommerce__Main::ATTENDEE_EVENT_KEY, true );
