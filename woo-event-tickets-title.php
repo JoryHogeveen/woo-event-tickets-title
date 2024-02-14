@@ -47,5 +47,51 @@ class Woo_Event_Tickets_Title
 	 * Woo_Event_Tickets_Title constructor.
 	 */
 	protected function __construct() {
+		add_filter( 'the_title', array( $this, 'filter_wooticket_titles_in_shop_and_search' ), 10, 2 );
+	}
+
+	function filter_wooticket_titles_in_shop_and_search( $title, $id ) {
+
+		try {
+			if ( ! wc_get_product( $id ) ) {
+				return $title;
+			}
+
+			if ( is_admin() ) {
+				
+			} else {
+				if ( ! function_exists( 'is_shop' ) ) {
+					return $title;
+				}
+
+				if ( is_shop() || is_search() ) {
+					$title = $this->append_event_title( $title, $id );
+				}
+			}
+
+		} catch ( \Throwable $e ) {
+			if ( is_super_admin() ) {
+				var_dump( $e->getMessage() );
+			}
+		}
+	
+		return $title;
+	}
+
+	private function append_event_title( $title, $id ) {
+
+		// Search for the non-deprecated custom field.
+		$event_id = (int) get_post_meta( $id, Tribe__Tickets_Plus__Commerce__WooCommerce__Main::ATTENDEE_EVENT_KEY, true );
+
+		if ( ! tribe_is_event( $event_id ) ) {
+			// Search for the deprecated custom field, from Tribe__Tickets_Plus__Commerce__WooCommerce__Main::$event_key
+			$event_id = (int) get_post_meta( $id, '_tribe_wooticket_for_event', true );
+		}
+
+		if ( tribe_is_event( $event_id ) ) {
+			$title .= sprintf( ' for Event: %s', esc_html( get_the_title( $event_id ) ) );
+		}
+
+		return $title;
 	}
 }
