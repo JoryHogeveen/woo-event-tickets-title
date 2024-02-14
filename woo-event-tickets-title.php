@@ -48,11 +48,12 @@ class Woo_Event_Tickets_Title
 	 */
 	protected function __construct() {
 		add_filter( 'the_title', array( $this, 'filter_wooticket_titles_in_shop_and_search' ), 10, 2 );
-		add_filter( 'woocommerce_order_item_name', array( $this, 'filter_woocommerce_order_item_name' ), 10, 2 );
 		add_filter( 'display_post_states', array( $this, 'filter_display_post_states' ), 10, 2 );
+		add_filter( 'woocommerce_cart_item_name', array( $this, 'filter_woocommerce_listing_item_name' ), 10, 2 );
+		add_filter( 'woocommerce_order_item_name', array( $this, 'filter_woocommerce_listing_item_name' ), 10, 2 );
 	}
 
-	function filter_woocommerce_order_item_name( $name, $item ) {
+	function filter_woocommerce_listing_item_name( $name, $item ) {
 		try {
 			$event = tribe_events_get_ticket_event( $item['product_id'] );
 			if ( $event ) {
