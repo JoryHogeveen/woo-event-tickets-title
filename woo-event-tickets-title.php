@@ -59,7 +59,7 @@ class Woo_Event_Tickets_Title
 			if ( $event ) {
 				$link = get_permalink( $event->ID );
 				$event_date = tribe_get_start_date( $event->ID, $display_time = true, 'M j \a\t g:ia' );
-				$name = $name . '| Ticket for <a href="' . $link . '">' . $event->post_title . '</a>';// - ' . $event_date;
+				$name = $name . ' | Ticket for <a href="' . $link . '">' . $event->post_title . '</a>';// - ' . $event_date;
 			}
 		} catch ( \Throwable $e ) {
 			if ( is_super_admin() ) {
