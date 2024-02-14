@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       WooCommerce Event Tickets - Title
+ * Plugin Name:       WooCommerce Event Tickets - Add Event Title
  * Description:       Include event title within ticket names at various locations.
  * Version:           1.0
  * Author:            Jory Hogeveen
